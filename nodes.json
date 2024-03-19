@@ -5,7 +5,7 @@
             "user" : "root",
             "host" : "47.76.207.49",
             "dir" : "/root/damysus",
-            "key" : "id_rsa"
+            "key" : "/root/.ssh/id_rsa"
         },
 
         {
@@ -13,7 +13,7 @@
             "user" : "root",
             "host" : "127.0.0.1",
             "dir" : "/root/damysus",
-            "key" : "id_rsa"
+            "key" : "/root/.ssh/id_rsa"
         }
 
     ]

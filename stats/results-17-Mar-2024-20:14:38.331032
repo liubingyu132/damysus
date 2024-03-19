@@ -1,0 +1,25 @@
+>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=1 repeat=9 [complete-runs=9 aborted-runs=0] NumBS=1
+avg throughput: 1017.901440avg latency (view): 0.394471avg handle 1.771267avg crypto (sign): 0.000000avg crypto (verif): 0.027867avg crypto (sign-num): 0.000000avg crypto (verif-num): 26.666667>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=2 repeat=9 [complete-runs=19 aborted-runs=0] NumBS=1
+avg throughput: 832.943949avg latency (view): 0.481833avg handle 2.000440avg crypto (sign): 0.000000avg crypto (verif): 0.037600avg crypto (sign-num): 0.000000avg crypto (verif-num): 38.000000>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=4 repeat=9 [complete-runs=29 aborted-runs=0] NumBS=2
+avg throughput: 628.150434avg latency (view): 0.637218avg handle 2.248500avg crypto (sign): 0.000000avg crypto (verif): 0.049989avg crypto (sign-num): 0.000000avg crypto (verif-num): 58.888889>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=10 repeat=9 [complete-runs=39 aborted-runs=0] NumBS=5
+avg throughput: 325.506923avg latency (view): 1.229788avg handle 3.070843avg crypto (sign): 0.000000avg crypto (verif): 0.075314avg crypto (sign-num): 0.000000avg crypto (verif-num): 119.523810>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=15 repeat=9 [complete-runs=49 aborted-runs=0] NumBS=8
+avg throughput: 190.204049avg latency (view): 2.109036avg handle 4.001658avg crypto (sign): 0.000000avg crypto (verif): 0.109916avg crypto (sign-num): 0.000000avg crypto (verif-num): 169.677419>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=1 repeat=9 [complete-runs=59 aborted-runs=0] NumBS=1
+avg throughput: 989.679285avg latency (view): 0.407467avg handle 1.832267avg crypto (sign): 0.000000avg crypto (verif): 0.029300avg crypto (sign-num): 0.000000avg crypto (verif-num): 26.666667
+>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=2 repeat=9 [complete-runs=69 aborted-runs=0] NumBS=2
+avg throughput: 820.267123avg latency (view): 0.488607avg handle 1.999500avg crypto (sign): 0.000000avg crypto (verif): 0.039320avg crypto (sign-num): 0.000000avg crypto (verif-num): 38.000000
+>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=4 repeat=9 [complete-runs=79 aborted-runs=0] NumBS=4
+avg throughput: 626.546491avg latency (view): 0.646871avg handle 2.294589avg crypto (sign): 0.000000avg crypto (verif): 0.051178avg crypto (sign-num): 0.000000avg crypto (verif-num): 58.888889
+>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=10 repeat=9 [complete-runs=89 aborted-runs=0] NumBS=10
+avg throughput: 322.698437avg latency (view): 1.241286avg handle 3.038810avg crypto (sign): 0.000000avg crypto (verif): 0.073057avg crypto (sign-num): 0.000000avg crypto (verif-num): 119.523810
+>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=15 repeat=9 [complete-runs=99 aborted-runs=0] NumBS=15
+avg throughput: 200.750266avg latency (view): 1.995735avg handle 3.739961avg crypto (sign): 0.000000avg crypto (verif): 0.094587avg crypto (sign-num): 0.000000avg crypto (verif-num): 169.677419
+>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=1 repeat=9 [complete-runs=109 aborted-runs=0] NumBS=2
+avg throughput: 1002.885044avg latency (view): 0.400867avg handle 1.836133avg crypto (sign): 0.000000avg crypto (verif): 0.031200avg crypto (sign-num): 0.000000avg crypto (verif-num): 26.666667
+>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=2 repeat=9 [complete-runs=119 aborted-runs=0] NumBS=3
+avg throughput: 858.527670avg latency (view): 0.472903avg handle 1.947140avg crypto (sign): 0.000000avg crypto (verif): 0.036220avg crypto (sign-num): 0.000000avg crypto (verif-num): 38.000000
+>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=4 repeat=9 [complete-runs=129 aborted-runs=0] NumBS=6
+avg throughput: 628.659330avg latency (view): 0.637374avg handle 2.254567avg crypto (sign): 0.000000avg crypto (verif): 0.050022avg crypto (sign-num): 0.000000avg crypto (verif-num): 58.888889
+>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=10 repeat=9 [complete-runs=139 aborted-runs=0] NumBS=15
+avg throughput: 331.984520avg latency (view): 1.205532avg handle 2.956243avg crypto (sign): 0.000000avg crypto (verif): 0.070095avg crypto (sign-num): 0.000000avg crypto (verif-num): 119.523810
+>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=15 repeat=9 [complete-runs=149 aborted-runs=0] NumBS=23
+avg throughput: 201.496244avg latency (view): 1.991858avg handle 3.742823avg crypto (sign): 0.000000avg crypto (verif): 0.096277avg crypto (sign-num): 0.000000avg crypto (verif-num): 169.677419

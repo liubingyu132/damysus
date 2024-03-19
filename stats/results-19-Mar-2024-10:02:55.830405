@@ -1,0 +1,2 @@
+>>>>>>>>>>>>>>>>>>>> protocol=BASIC_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=1 repeat=1 [complete-runs=1 aborted-runs=0] 
+avg throughput: 747.840807avg latency (view): 0.544042avg handle 2.277333avg crypto (sign): 0.000000avg crypto (verif): 0.052500avg crypto (sign-num): 0.000000avg crypto (verif-num): 26.666667

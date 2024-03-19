@@ -1,0 +1,3 @@
+>>>>>>>>>>>>>>>>>>>> protocol=CHAINED_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=1 repeat=9 [complete-runs=9 aborted-runs=0] 
+avg throughput: 750.009322avg latency (view): 1.247387avg handle 1576.504867avg crypto (sign): 0.000000avg crypto (verif): 4.795167avg crypto (sign-num): 0.000000avg crypto (verif-num): 2541.133333>>>>>>>>>>>>>>>>>>>> protocol=CHAINED_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=2 repeat=9 [complete-runs=19 aborted-runs=0] 
+avg throughput: 609.223358avg latency (view): 1.500950avg handle 1641.898400avg crypto (sign): 0.000000avg crypto (verif): 7.069978avg crypto (sign-num): 0.000000avg crypto (verif-num): 2629.644444

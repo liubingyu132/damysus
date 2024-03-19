@@ -63,7 +63,7 @@ numClTrans   = 5     # number of transactions sent by each clients
 sleepTime    = 0     # time clients sleep between 2 sends (in microseconds)
 timeout      = 50     # timeout before changing changing leader (in seconds)
 #
-numTrans      = 1000    # number of transactions
+numTrans      = 400    # number of transactions
 payloadSize   = 0 #256 #0 #256 #128      # total size of a transaction
 useMultiCores = True
 numMakeCores  = multiprocessing.cpu_count()  # number of cores to use to make
@@ -324,7 +324,7 @@ dockerCpu  = 0          # cpus used by containers (0 means no constraints)
 
 ## Cluster parameters
 
-clusterFile = "nodes"
+clusterFile = "nodes.json"
 clusterNet  = "damysusNet" # "bridge"
 
 ## if use htbft

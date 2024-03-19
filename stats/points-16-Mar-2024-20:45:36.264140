@@ -1,0 +1,23 @@
+##params cpus=0 mem=0 lat=0 payload=0 repeats1=1 repeats2=1 views=30 regions=one
+# protocol=BASIC_CHEAP_AND_QUICK regions=one payload=0 faults=1 instance=0 repeats=1
+protocol=BASIC_CHEAP_AND_QUICK faults=1 throughput-view=1151.907847
+protocol=BASIC_CHEAP_AND_QUICK faults=1 latency-view=0.34725
+protocol=BASIC_CHEAP_AND_QUICK faults=1 handle=4.511
+protocol=BASIC_CHEAP_AND_QUICK faults=1 crypto-sign=0.0
+protocol=BASIC_CHEAP_AND_QUICK faults=1 crypto-verif=0.048
+protocol=BASIC_CHEAP_AND_QUICK faults=1 crypto-num-sign=0
+protocol=BASIC_CHEAP_AND_QUICK faults=1 crypto-num-verif=80
+protocol=BASIC_CHEAP_AND_QUICK faults=1 throughput-view=1144.90161
+protocol=BASIC_CHEAP_AND_QUICK faults=1 latency-view=0.349375
+protocol=BASIC_CHEAP_AND_QUICK faults=1 handle=4.054
+protocol=BASIC_CHEAP_AND_QUICK faults=1 crypto-sign=0.0
+protocol=BASIC_CHEAP_AND_QUICK faults=1 crypto-verif=0.041
+protocol=BASIC_CHEAP_AND_QUICK faults=1 crypto-num-sign=0
+protocol=BASIC_CHEAP_AND_QUICK faults=1 crypto-num-verif=80
+protocol=BASIC_CHEAP_AND_QUICK faults=1 throughput-view=1142.585099
+protocol=BASIC_CHEAP_AND_QUICK faults=1 latency-view=0.350083
+protocol=BASIC_CHEAP_AND_QUICK faults=1 handle=5.352
+protocol=BASIC_CHEAP_AND_QUICK faults=1 crypto-sign=0.0
+protocol=BASIC_CHEAP_AND_QUICK faults=1 crypto-verif=0.059
+protocol=BASIC_CHEAP_AND_QUICK faults=1 crypto-num-sign=0
+protocol=BASIC_CHEAP_AND_QUICK faults=1 crypto-num-verif=80

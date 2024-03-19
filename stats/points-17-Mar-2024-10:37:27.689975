@@ -1,0 +1,4 @@
+##params cpus=0 mem=0 lat=0 payload=0 repeats1=10 repeats2=1 views=30 regions=one
+# protocol=BASIC_BASELINE regions=one payload=0 faults=20 instance=0 repeats=10
+# protocol=BASIC_BASELINE regions=one payload=0 faults=20 instance=1 repeats=10
+# protocol=BASIC_BASELINE regions=one payload=0 faults=20 instance=2 repeats=10

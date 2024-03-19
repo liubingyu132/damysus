@@ -1,0 +1,2 @@
+>>>>>>>>>>>>>>>>>>>> protocol=CHAINED_CHEAP_AND_QUICK ;regions=one ;payload=0 (factor=2) #faults=1 repeat=9 [complete-runs=9 aborted-runs=0] NumBS=1
+avg throughput: 736.695259avg latency (view): 1.243579avg handle 1529.791500avg crypto (sign): 0.000000avg crypto (verif): 3.927767avg crypto (sign-num): 0.000000avg crypto (verif-num): 2398.066667

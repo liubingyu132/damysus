@@ -72,6 +72,11 @@ using Time        = std::chrono::time_point<std::chrono::steady_clock>;
 class Handler {
 
  private:
+
+#ifdef HTBFT
+  unsigned int numBS;
+#endif
+
   PID myid;
   double timeout;                // timeout after which nodes start a new view
   unsigned int numFaults;        // number of faults
@@ -535,7 +540,7 @@ class Handler {
   void handle_ldrprepare_ch_comb(MsgLdrPrepareChComb msg, const PeerNet::conn_t &conn);
 
  public:
-  Handler(KeysFun kf, PID id, unsigned long int timeout, unsigned int constFactor, unsigned int numFaults, unsigned int maxViews, Nodes nodes, KEY priv, PeerNet::Config pconf, ClientNet::Config cconf);
+  Handler(KeysFun kf, PID id, unsigned long int timeout, unsigned int constFactor, unsigned int numFaults, unsigned int maxViews, Nodes nodes, KEY priv, PeerNet::Config pconf, ClientNet::Config cconf, unsigned int numBS);
 };
 
 

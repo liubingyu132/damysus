@@ -1,11 +1,19 @@
 # Use an official ocaml runtime as a parent image
 # Install focal
 FROM ubuntu:20.04
+RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+
+
+
 
 EXPOSE 80/tcp
 
 # Set the working directory to /app
 WORKDIR /app
+
+
+
+
 
 # This is to avoid interactive questions from tzdata
 ENV DEBIAN_FRONTEND=noninteractive
@@ -19,6 +27,12 @@ RUN apt-get update \
     && apt-get install -y pkg-config libuv1-dev python3-matplotlib \
     && apt-get install -y emacs psmisc jq iproute2
 
+
+RUN git config --global http.proxy http://127.0.0.1:8889
+RUN git config --global http.version HTTP/1.1 \
+    && git config --global https.postBuffer 1048576000 \
+    && git config --global http.postBuffer 1048576000
+    
 # install a newer version of openssl
 RUN wget https://www.openssl.org/source/openssl-1.1.1i.tar.gz \
     && tar -xvzf openssl-1.1.1i.tar.gz \

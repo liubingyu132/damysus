@@ -53,6 +53,10 @@ int main(int argc, char const *argv[]) {
   if (argc > 5) { sscanf(argv[5], "%lf", &timeout); }
   std::cout << KYEL << "[" << myid << "]timeout=" << timeout << KNRM << std::endl;
 
+  unsigned int numBS = 1;
+  
+  if (argc > 6) { sscanf(argv[6], "%d", &numBS); }
+  std::cout << KYEL << "[" << myid << "]numbs=" << numBS << KNRM << std::endl;
 
   // -- Public key
   KEY priv;
@@ -193,7 +197,7 @@ int main(int argc, char const *argv[]) {
   cconfig.max_msg_size(2*size);
   //config.ping_period(2);
   if (DEBUG1) std::cout << KYEL << "[" << myid << "]starting handler" << KNRM << std::endl;
-  Handler handler(kf,myid,timeout,constFactor,numFaults,numViews,nodes,priv,pconfig,cconfig);
+  Handler handler(kf,myid,timeout,constFactor,numFaults,numViews,nodes,priv,pconfig,cconfig, numBS);
 
   return 0;
 };

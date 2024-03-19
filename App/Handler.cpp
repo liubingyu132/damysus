@@ -552,10 +552,9 @@ const uint8_t MsgReply::opcode;
 const uint8_t MsgStart::opcode;
 //const uint8_t MsgStop::opcode;
 
-
-
-Handler::Handler(KeysFun k, PID id, unsigned long int timeout, unsigned int constFactor, unsigned int numFaults, unsigned int maxViews, Nodes nodes, KEY priv, PeerNet::Config pconf, ClientNet::Config cconf) :
-pnet(pec,pconf), cnet(cec,cconf) {
+Handler::Handler(KeysFun k, PID id, unsigned long int timeout, unsigned int constFactor, unsigned int numFaults, unsigned int maxViews, Nodes nodes, KEY priv, PeerNet::Config pconf, ClientNet::Config cconf, unsigned int numBS = 0): 
+pnet(pec,pconf), cnet(cec,cconf) 
+{
   this->myid         = id;
   this->timeout      = timeout;
   this->numFaults    = numFaults;
@@ -565,6 +564,10 @@ pnet(pec,pconf), cnet(cec,cconf) {
   this->priv         = priv;
   this->maxViews     = maxViews;
   this->kf           = k;
+
+#ifdef HTBFT
+  this->numBS = numBS;
+#endif
 
   if (DEBUG1) { std::cout << KBLU << nfo() << "starting handler" << KNRM << std::endl; }
   if (DEBUG1) { std::cout << KBLU << nfo() << "qsize=" << this->qsize << KNRM << std::endl; }
@@ -793,7 +796,16 @@ void Handler::printClientInfo() {
 }
 
 
-unsigned int Handler::getLeaderOf(View v) { return (v % this->total); }
+
+// View is a type alias of unsign int.
+unsigned int Handler::getLeaderOf(View v) { 
+
+#ifdef HTBFT
+    return v % this->numBS;
+#else
+  return (v % this->total); 
+#endif
+}
 
 unsigned int Handler::getCurrentLeader() { return getLeaderOf(this->view); }
 

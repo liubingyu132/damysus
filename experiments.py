@@ -42,23 +42,28 @@ import mmap
 sgxmode     = "SIM"
 #sgxmode      = "HW"
 srcsgx       = "source /opt/intel/sgxsdk/environment" # this is where the sdk is supposed to be installed
-faults       = [1] #[1,2,4,10] #[1,2,4,10,20,30,40] #[1,2,4,6,8,10,12,14,20,30] # list of numbers of faults
+# faults       =  [1] #[1,2,4,10] #[1,2,4,10,20,30,40] #[1,2,4,6,8,10,12,14,20,30] # list of numbers of faults
+# faults = [1,2,4,10,15]
+faults = [1,2,4,10,15]
+#faults = [20]
+# numBSList       = [0.5, 1, 1.5]
+numBSList = [0.5,1,1.5]
 #faults      = [1,10,20,30,40,50]
 #faults      = [40]
-repeats      = 100 #10 #50 #5 #100 #2     # number of times to repeat each experiment
-repeatsL2    = 1
+repeats      = 2
+ #10 #50 #5 #100 #2     # number of times to repeat each experiment
+repeatsL2    = 15 
+numViews     = 10     # number of views in each run
+cutOffBound  = 6000   # stop experiment after some time
 #
-numViews     = 30     # number of views in each run
-cutOffBound  = 60     # stop experiment after some time
-#
-numClients   = 1     # number of clients
+numClients   = 6     # number of clients
 numNonChCls  = 1     # number of clients for the non-chained versions
 numChCls     = 1     # number of clients for the chained versions
-numClTrans   = 1     # number of transactions sent by each clients
+numClTrans   = 5     # number of transactions sent by each clients
 sleepTime    = 0     # time clients sleep between 2 sends (in microseconds)
-timeout      = 5     # timeout before changing changing leader (in seconds)
+timeout      = 50     # timeout before changing changing leader (in seconds)
 #
-numTrans      = 400    # number of transactions
+numTrans      = 1000    # number of transactions
 payloadSize   = 0 #256 #0 #256 #128      # total size of a transaction
 useMultiCores = True
 numMakeCores  = multiprocessing.cpu_count()  # number of cores to use to make
@@ -134,6 +139,7 @@ plotFile     = statsdir + "/plot-" + timestampStr + ".png"
 clientsFile  = statsdir + "/clients-" + timestampStr
 tvlFile      = statsdir + "/tvl-" + timestampStr + ".png"
 debugFile    = statsdir + "/debug-" + timestampStr
+resultFile   = statsdir+ "/results-" + timestampStr
 
 # Names
 baseHS   = "Basic HotStuff"
@@ -321,6 +327,8 @@ dockerCpu  = 0          # cpus used by containers (0 means no constraints)
 clusterFile = "nodes"
 clusterNet  = "damysusNet" # "bridge"
 
+## if use htbft
+isHtbft = False
 
 ## Code
 
@@ -773,6 +781,7 @@ def runAWS():
 
     printNodePointParams()
 
+    
     for numFaults in faults:
         for instance2 in range(repeatsL2):
             # starts the instances
@@ -1320,7 +1329,10 @@ def mkParams(protocol,constFactor,numFaults,numTrans,payloadSize):
     f.write("#define MAX_NUM_TRANSACTIONS " + str(numTrans) + "\n")
     f.write("#define PAYLOAD_SIZE " +str(payloadSize) + "\n")
     f.write("\n")
+    if isHtbft:
+        f.write("#define HTBFT \n")
     f.write("#endif\n")
+
     f.close()
 # End of mkParams
 
@@ -1387,7 +1399,7 @@ def mkApp(protocol,constFactor,numFaults,numTrans,payloadSize):
 # End of mkApp
 
 
-def execute(protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults,instance):
+def execute(protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults,instance, numBS = 1):
     subsReps    = [] # list of replica subprocesses
     subsClients = [] # list of client subprocesses
     numReps = (constFactor * numFaults) + 1
@@ -1420,7 +1432,7 @@ def execute(protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFa
         # we give some time for the nodes to connect gradually
         if (i%10 == 5):
             time.sleep(2)
-        cmd = " ".join([server, str(i), str(numFaults), str(constFactor), str(numViews), str(newtimeout)])
+        cmd = " ".join([server, str(i), str(numFaults), str(constFactor), str(numViews), str(newtimeout), str(numBS)])
         if runDocker:
             dockerInstance = dockerBase + str(i)
             if needsSGX(protocol):
@@ -1732,7 +1744,7 @@ def stopContainers(numReps,numClients):
 
 
 # if 'recompile' is true, the application will be recompiled (default=true)
-def computeAvgStats(recompile,protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults,numRepeats):
+def computeAvgStats(recompile,protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults,numRepeats, numBS):
     print("<<<<<<<<<<<<<<<<<<<<",
           "protocol="+protocol.value,
           ";regions="+regions[0],
@@ -1763,19 +1775,21 @@ def computeAvgStats(recompile,protocol,constFactor,numClTrans,sleepTime,numViews
 
     # running 'numRepeats' time
     for i in range(numRepeats):
-        print(">>>>>>>>>>>>>>>>>>>>",
+        info = ' '.join([">>>>>>>>>>>>>>>>>>>>",
               "protocol="+protocol.value,
               ";regions="+regions[0],
               ";payload="+str(payloadSize),
               "(factor="+str(constFactor)+")",
               "#faults="+str(numFaults),
               "repeat="+str(i),
-              "[complete-runs="+str(completeRuns),"aborted-runs="+str(abortedRuns)+"]")
+              "[complete-runs="+str(completeRuns),"aborted-runs="+str(abortedRuns)+"]",
+              ("NumBS=%d"%numBS) if isHtbft else '' ])
+        print(info)
         print("aborted runs so far:", aborted)
         clearStatsDir()
-        execute(protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults,i)
+        execute(protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults,i, numBS)
         (throughputView,latencyView,handle,cryptoSign,cryptoVerif,cryptoNumSign,cryptoNumVerif) = computeStats(protocol,numFaults,i,numRepeats)
-        if throughputView > 0 and latencyView > 0 and handle > 0 and cryptoSign > 0 and cryptoVerif > 0 and cryptoNumSign > 0 and cryptoNumVerif > 0:
+        if throughputView >= 0 and latencyView >= 0 and handle >= 0 and cryptoSign >= 0 and cryptoVerif >= 0 and cryptoNumSign >= 0 and cryptoNumVerif >= 0:
             throughputViews.append(throughputView)
             latencyViews.append(latencyView)
             handles.append(handle)
@@ -1788,13 +1802,13 @@ def computeAvgStats(recompile,protocol,constFactor,numClTrans,sleepTime,numViews
     if runDocker:
         stopContainers(numReps,numClients)
 
-    throughputView = sum(throughputViews)/goodValues if goodValues > 0 else 0.0
-    latencyView    = sum(latencyViews)/goodValues    if goodValues > 0 else 0.0
-    handle         = sum(handles)/goodValues         if goodValues > 0 else 0.0
-    cryptoSign     = sum(cryptoSigns)/goodValues     if goodValues > 0 else 0.0
-    cryptoVerif    = sum(cryptoVerifs)/goodValues    if goodValues > 0 else 0.0
-    cryptoNumSign  = sum(cryptoNumSigns)/goodValues  if goodValues > 0 else 0.0
-    cryptoNumVerif = sum(cryptoNumVerifs)/goodValues if goodValues > 0 else 0.0
+    throughputView = sum(throughputViews)/goodValues 
+    latencyView    = sum(latencyViews)/goodValues    
+    handle         = sum(handles)/goodValues         
+    cryptoSign     = sum(cryptoSigns)/goodValues     
+    cryptoVerif    = sum(cryptoVerifs)/goodValues    
+    cryptoNumSign  = sum(cryptoNumSigns)/goodValues  
+    cryptoNumVerif = sum(cryptoNumVerifs)/goodValues 
 
     print("avg throughput (view):",  throughputView)
     print("avg latency (view):",     latencyView)
@@ -1803,6 +1817,20 @@ def computeAvgStats(recompile,protocol,constFactor,numClTrans,sleepTime,numViews
     print("avg crypto (verif):",     cryptoVerif)
     print("avg crypto (sign-num):",  cryptoNumSign)
     print("avg crypto (verif-num):", cryptoNumVerif)
+    
+    with open(resultFile, 'a') as f:
+        f.write(info + '\n')
+        f.writelines([
+            "avg throughput: %f"%throughputView,
+            "avg latency (view): %f"%latencyView,
+            "avg handle %f"% handle,
+            "avg crypto (sign): %f"% cryptoSign,
+            "avg crypto (verif): %f"% cryptoVerif,
+            "avg crypto (sign-num): %f"% cryptoNumSign,
+            "avg crypto (verif-num): %f"% cryptoNumVerif,
+            ''
+        ])
+
 
     return (throughputView, latencyView, handle, cryptoSign, cryptoVerif, cryptoNumSign, cryptoNumVerif)
 # End of computeAvgStats
@@ -2607,75 +2635,79 @@ def createPlot(pFile):
     return (dictTVBase, dictTVCheap, dictTVQuick, dictTVComb, dictTVFree, dictTVOnep, dictTVChBase, dictTVChComb,
             dictLVBase, dictLVCheap, dictLVQuick, dictLVComb, dictLVFree, dictLVOnep, dictLVChBase, dictLVChComb)
 # End of createPlot
-
+import math
 
 def runExperiments():
+    global numBSList
     # Creating stats directory
     Path(statsdir).mkdir(parents=True, exist_ok=True)
 
     printNodePointParams()
-
-    for numFaults in faults:
-        # ------
-        # HotStuff-like baseline
-        if runBase:
-            computeAvgStats(recompile,protocol=Protocol.BASE,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats)
-        else:
-            (0.0,0.0,0.0,0.0)
-        # ------
-        # Cheap-HotStuff (TEE locked/prepared blocks)
-        if runCheap:
-            computeAvgStats(recompile,protocol=Protocol.CHEAP,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats)
-        else:
-            (0.0,0.0,0.0,0.0)
-        # ------
-        # Quick-HotStuff (Accumulator)
-        if runQuick:
-            computeAvgStats(recompile,protocol=Protocol.QUICK,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats)
-        else:
-            (0.0,0.0,0.0,0.0)
-        # ------
-        # Quick-HotStuff (Accumulator) - debug version
-        if runQuickDbg:
-            computeAvgStats(recompile,protocol=Protocol.QUICKDBG,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats)
-        else:
-            (0.0,0.0,0.0,0.0)
-        # ------
-        # Combines Cheap&Quick-HotStuff
-        if runComb:
-            computeAvgStats(recompile,protocol=Protocol.COMB,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats)
-        else:
-            (0.0,0.0,0.0,0.0)
-        # ------
-        # Free
-        if runFree:
-            computeAvgStats(recompile,protocol=Protocol.FREE,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats)
-        else:
-            (0.0,0.0,0.0,0.0)
-        # ------
-        # Onep
-        if runOnep:
-            computeAvgStats(recompile,protocol=Protocol.ONEP,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats)
-        else:
-            (0.0,0.0,0.0,0.0)
-        # ------
-        # Chained HotStuff-like baseline
-        if runChBase:
-            computeAvgStats(recompile,protocol=Protocol.CHBASE,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats)
-        else:
-            (0.0,0.0,0.0,0.0)
-        # ------
-        # Chained Cheap&Quick
-        if runChComb:
-            computeAvgStats(recompile,protocol=Protocol.CHCOMB,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats)
-        else:
-            (0.0,0.0,0.0,0.0)
-        # ------
-        # Chained Cheap&Quick - debug version
-        if runChCombDbg:
-            computeAvgStats(recompile,protocol=Protocol.CHCOMBDBG,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats)
-        else:
-            (0.0,0.0,0.0,0.0)
+    if not isHtbft:
+        numBSList = [1]
+    for fnumbs in numBSList:
+        for numFaults in faults:
+            # ------
+            # HotStuff-like baseline
+            numBS = int(math.ceil(fnumbs * numFaults))
+            if runBase:
+                computeAvgStats(recompile,protocol=Protocol.BASE,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats, numBS=numBS)
+            else:
+                (0.0,0.0,0.0,0.0)
+            # ------
+            # Cheap-HotStuff (TEE locked/prepared blocks)
+            if runCheap:
+                computeAvgStats(recompile,protocol=Protocol.CHEAP,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats, numBS=numBS)
+            else:
+                (0.0,0.0,0.0,0.0)
+            # ------
+            # Quick-HotStuff (Accumulator)
+            if runQuick:
+                computeAvgStats(recompile,protocol=Protocol.QUICK,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats,numBS=numBS)
+            else:
+                (0.0,0.0,0.0,0.0)
+            # ------
+            # Quick-HotStuff (Accumulator) - debug version
+            if runQuickDbg:
+                computeAvgStats(recompile,protocol=Protocol.QUICKDBG,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats,numBS=numBS)
+            else:
+                (0.0,0.0,0.0,0.0)
+            # ------
+            # Combines Cheap&Quick-HotStuff
+            if runComb:
+                computeAvgStats(recompile,protocol=Protocol.COMB,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats,numBS=numBS)
+            else:
+                (0.0,0.0,0.0,0.0)
+            # ------
+            # Free
+            if runFree:
+                computeAvgStats(recompile,protocol=Protocol.FREE,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats,numBS=numBS)
+            else:
+                (0.0,0.0,0.0,0.0)
+            # ------
+            # Onep
+            if runOnep:
+                computeAvgStats(recompile,protocol=Protocol.ONEP,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats,numBS=numBS)
+            else:
+                (0.0,0.0,0.0,0.0)
+            # ------
+            # Chained HotStuff-like baseline
+            if runChBase:
+                computeAvgStats(recompile,protocol=Protocol.CHBASE,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats,numBS=numBS)
+            else:
+                (0.0,0.0,0.0,0.0)
+            # ------
+            # Chained Cheap&Quick
+            if runChComb:
+                computeAvgStats(recompile,protocol=Protocol.CHCOMB,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats,numBS=numBS)
+            else:
+                (0.0,0.0,0.0,0.0)
+            # ------
+            # Chained Cheap&Quick - debug version
+            if runChCombDbg:
+                computeAvgStats(recompile,protocol=Protocol.CHCOMBDBG,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numRepeats=repeats,numBS=numBS)
+            else:
+                (0.0,0.0,0.0,0.0)
 
     print("num complete runs=", completeRuns)
     print("num aborted runs=", abortedRuns)
@@ -3551,6 +3583,7 @@ parser.add_argument("--cryptoonly", action="store_true",   help="to plot crypto 
 parser.add_argument("--debug",      type=int, default=1,   help="to print debugging information while plotting (0 means no)")
 parser.add_argument("--latency",    type=int, default=1,   help="to not print debugging information while plotting (0 means no)")
 parser.add_argument("--throughput", type=int, default=1,   help="to not print debugging information while plotting (0 means no)")
+parser.add_argument("--htbft", action="store_true", help="if use htpft mode")
 args = parser.parse_args()
 
 
@@ -3735,7 +3768,9 @@ if args.clients2 > 0:
     numChCls = args.clients2
     print("SUCCESSFULLY PARSED ARGUMENT - the number of clients for the chained version is now:", numChCls)
 
-
+if args.htbft:
+    isHtbft = True
+    print("Use Htbft mode")
 if args.test:
     print("done")
 elif args.file.startswith(statsdir+"/points-") or args.file.startswith(statsdir+"/final-points-"):

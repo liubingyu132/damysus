@@ -44,15 +44,15 @@ sgxmode     = "SIM"
 srcsgx       = "source /opt/intel/sgxsdk/environment" # this is where the sdk is supposed to be installed
 # faults       =  [1] #[1,2,4,10] #[1,2,4,10,20,30,40] #[1,2,4,6,8,10,12,14,20,30] # list of numbers of faults
 # faults = [1,2,4,10,15]
-faults = [1,2,4,10,15]
+faults = [1]
 #faults = [20]
 # numBSList       = [0.5, 1, 1.5]
 numBSList = [0.5,1,1.5]
 #faults      = [1,10,20,30,40,50]
 #faults      = [40]
-repeats      = 2
+repeats      = 1
  #10 #50 #5 #100 #2     # number of times to repeat each experiment
-repeatsL2    = 15 
+repeatsL2    = 1 
 numViews     = 10     # number of views in each run
 cutOffBound  = 6000   # stop experiment after some time
 #

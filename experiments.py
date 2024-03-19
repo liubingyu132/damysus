@@ -989,7 +989,7 @@ def makeCluster(instanceIds,protocol):
 # End of makeCluster
 
 
-def executeClusterInstances(instanceRepIds,instanceClIds,protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults,instance):
+def executeClusterInstances(instanceRepIds,instanceClIds,protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults,instance, numBS = 1):
     print(">> connecting to",str(len(instanceRepIds)),"replica instance(s)")
     print(">> connecting to",str(len(instanceClIds)),"client instance(s)")
 
@@ -1005,7 +1005,7 @@ def executeClusterInstances(instanceRepIds,instanceClIds,protocol,constFactor,nu
             time.sleep(2)
         dockerI = dockerBase + i
         sshAdr  = node["user"] + "@" + node["host"]
-        srun    = " ".join([server,str(n),str(numFaults),str(constFactor),str(numViews),str(newtimeout)])
+        srun    = " ".join([server,str(n),str(numFaults),str(constFactor),str(numViews),str(newtimeout), str(numBS)])
         run_cmd = docker + " exec -t " + dockerI + " bash -c \"" + srcsgx + "; rm -f stats/*; " + srun + "\""
         s1 = Popen(["ssh","-i",node["key"],"-o",sshOpt1,"-ntt",sshAdr,run_cmd])
         print("the commandline is {}".format(s1.args))
@@ -1136,9 +1136,10 @@ def executeClusterInstances(instanceRepIds,instanceClIds,protocol,constFactor,nu
 # End of executeClusterInstances
 
 
-def executeCluster(info,protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults):
+def executeCluster(info,protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults, numBS = 1):
     print("<<<<<<<<<<<<<<<<<<<<",
           "protocol="+protocol.value,
+          "numBs="+str(numBS),
           ";payload="+str(payloadSize),
           "(factor="+str(constFactor)+")",
           "#faults="+str(numFaults),
@@ -1161,7 +1162,7 @@ def executeCluster(info,protocol,constFactor,numClTrans,sleepTime,numViews,cutOf
     for instance in range(repeats):
         clearStatsDir()
         # execute the experiment
-        executeClusterInstances(instanceRepIds,instanceClIds,protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults,instance)
+        executeClusterInstances(instanceRepIds,instanceClIds,protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults,instance, numBS)
         (throughputView,latencyView,handle,cryptoSign,cryptoVerif,cryptoNumSign,cryptoNumVerif) = computeStats(protocol,numFaults,instance,repeats)
 
     for (n,i,node) in instanceRepIds + instanceClIds:
@@ -1215,47 +1216,51 @@ def runCluster():
     else:
         print("----no join command")
 
-    for numFaults in faults:
-        # ------
-        # HotStuff-like baseline
-        if runBase:
-            executeCluster(info=info,protocol=Protocol.BASE,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults)
-        # ------
-        # Cheap-HotStuff (TEE locked/prepared blocks)
-        if runCheap:
-            executeCluster(info=info,protocol=Protocol.CHEAP,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults)
-        # ------
-        # Quick-HotStuff (Accumulator)
-        if runQuick:
-            executeCluster(info=info,protocol=Protocol.QUICK,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults)
-        # ------
-        # Quick-HotStuff (Accumulator) - debug version
-        if runQuickDbg:
-            executeCluster(info=info,protocol=Protocol.QUICKDBG,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults)
-        # ------
-        # Combines Cheap&Quick-HotStuff
-        if runComb:
-            executeCluster(info=info,protocol=Protocol.COMB,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults)
-        # ------
-        # Free
-        if runFree:
-            executeCluster(info=info,protocol=Protocol.FREE,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults)
-        # ------
-        # Onep
-        if runOnep:
-            executeCluster(info=info,protocol=Protocol.ONEP,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults)
-        # ------
-        # Chained HotStuff-like baseline
-        if runChBase:
-            executeCluster(info=info,protocol=Protocol.CHBASE,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults)
-        # ------
-        # Chained Cheap&Quick
-        if runChComb:
-            executeCluster(info=info,protocol=Protocol.CHCOMB,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults)
-        # ------
-        # Chained Cheap&Quick - debug version
-        if runChCombDbg:
-            executeCluster(info=info,protocol=Protocol.CHCOMBDBG,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults)
+    global numBSList
+    if not isHtbft:
+        numBSList = [1]
+    for fnumbs in numBSList:
+        for numFaults in faults:
+            # ------
+            # HotStuff-like baseline
+            if runBase:
+                executeCluster(info=info,protocol=Protocol.BASE,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults, numBS=fnumbs)
+            # ------
+            # Cheap-HotStuff (TEE locked/prepared blocks)
+            if runCheap:
+                executeCluster(info=info,protocol=Protocol.CHEAP,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+            # ------
+            # Quick-HotStuff (Accumulator)
+            if runQuick:
+                executeCluster(info=info,protocol=Protocol.QUICK,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+            # ------
+            # Quick-HotStuff (Accumulator) - debug version
+            if runQuickDbg:
+                executeCluster(info=info,protocol=Protocol.QUICKDBG,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+            # ------
+            # Combines Cheap&Quick-HotStuff
+            if runComb:
+                executeCluster(info=info,protocol=Protocol.COMB,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+            # ------
+            # Free
+            if runFree:
+                executeCluster(info=info,protocol=Protocol.FREE,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+            # ------
+            # Onep
+            if runOnep:
+                executeCluster(info=info,protocol=Protocol.ONEP,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+            # ------
+            # Chained HotStuff-like baseline
+            if runChBase:
+                executeCluster(info=info,protocol=Protocol.CHBASE,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+            # ------
+            # Chained Cheap&Quick
+            if runChComb:
+                executeCluster(info=info,protocol=Protocol.CHCOMB,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+            # ------
+            # Chained Cheap&Quick - debug version
+            if runChCombDbg:
+                executeCluster(info=info,protocol=Protocol.CHCOMBDBG,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
 
     # cleanup
     for node in nodes:

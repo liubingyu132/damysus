@@ -4,7 +4,7 @@
             "node" : "node1",
             "user" : "root",
             "host" : "47.76.207.49",
-            "dir" : "/root/damysus",
+            "dir" : "/root/damysus-out",
             "key" : "/root/.ssh/id_rsa"
         },
 
@@ -12,7 +12,7 @@
             "node" : "node2",
             "user" : "root",
             "host" : "127.0.0.1",
-            "dir" : "/root/damysus",
+            "dir" : "/root/damysus-out",
             "key" : "/root/.ssh/id_rsa"
         }
 

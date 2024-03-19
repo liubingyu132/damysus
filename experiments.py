@@ -1283,7 +1283,7 @@ def prepareCluster():
     procs = []
     for node in nodes:
         sshAdr = node["user"] + "@" + node["host"]
-        prep_cmd = "cd " + node["dir"] + "; git clone https://github.com/vrahli/damysus.git; cd damysus; docker build -t damysus ."
+        prep_cmd = "cd " + node["dir"] + "; git clone https://github.com/liubingyu132/expriment.git; cd damysus; docker build -t damysus ."
         s = Popen(["ssh","-i",node["key"],"-o",sshOpt1,"-ntt",sshAdr,prep_cmd])
         procs.append((node,s))
 

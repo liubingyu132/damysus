@@ -18,14 +18,14 @@
         {
             "node" : "node3",
             "user" : "root",
-            "host" : "127.0.0.1",
+            "host" : "47.76.198.1",
             "dir" : "/root/damysus-out",
             "key" : "/root/.ssh/id_rsa"
         },
         {
             "node" : "node4",
             "user" : "root",
-            "host" : "127.0.0.1",
+            "host" : "8.210.79.149",
             "dir" : "/root/damysus-out",
             "key" : "/root/.ssh/id_rsa"
         }

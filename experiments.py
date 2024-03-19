@@ -1163,7 +1163,7 @@ def executeCluster(info,protocol,constFactor,numClTrans,sleepTime,numViews,cutOf
         clearStatsDir()
         # execute the experiment
         executeClusterInstances(instanceRepIds,instanceClIds,protocol,constFactor,numClTrans,sleepTime,numViews,cutOffBound,numFaults,instance, numBS)
-        (throughputView,latencyView,handle,cryptoSign,cryptoVerif,cryptoNumSign,cryptoNumVerif) = computeStats(protocol,numFaults,instance,repeats)
+        (throughputView,latencyView,handle,cryptoSign,cryptoVerif,cryptoNumSign,cryptoNumVerif) = computeStats(protocol,numFaults,instance,repeats,numBS)
 
     for (n,i,node) in instanceRepIds + instanceClIds:
         instance = dockerBase + i
@@ -1223,44 +1223,45 @@ def runCluster():
         for numFaults in faults:
             # ------
             # HotStuff-like baseline
+            numBS = int(math.ceil(fnumbs * numFaults))
             if runBase:
-                executeCluster(info=info,protocol=Protocol.BASE,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults, numBS=fnumbs)
+                executeCluster(info=info,protocol=Protocol.BASE,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults, numBS=numBS)
             # ------
             # Cheap-HotStuff (TEE locked/prepared blocks)
             if runCheap:
-                executeCluster(info=info,protocol=Protocol.CHEAP,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+                executeCluster(info=info,protocol=Protocol.CHEAP,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=numBS)
             # ------
             # Quick-HotStuff (Accumulator)
             if runQuick:
-                executeCluster(info=info,protocol=Protocol.QUICK,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+                executeCluster(info=info,protocol=Protocol.QUICK,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=numBS)
             # ------
             # Quick-HotStuff (Accumulator) - debug version
             if runQuickDbg:
-                executeCluster(info=info,protocol=Protocol.QUICKDBG,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+                executeCluster(info=info,protocol=Protocol.QUICKDBG,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=numBS)
             # ------
             # Combines Cheap&Quick-HotStuff
             if runComb:
-                executeCluster(info=info,protocol=Protocol.COMB,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+                executeCluster(info=info,protocol=Protocol.COMB,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=numBS)
             # ------
             # Free
             if runFree:
-                executeCluster(info=info,protocol=Protocol.FREE,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+                executeCluster(info=info,protocol=Protocol.FREE,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=numBS)
             # ------
             # Onep
             if runOnep:
-                executeCluster(info=info,protocol=Protocol.ONEP,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+                executeCluster(info=info,protocol=Protocol.ONEP,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=numBS)
             # ------
             # Chained HotStuff-like baseline
             if runChBase:
-                executeCluster(info=info,protocol=Protocol.CHBASE,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+                executeCluster(info=info,protocol=Protocol.CHBASE,constFactor=3,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=numBS)
             # ------
             # Chained Cheap&Quick
             if runChComb:
-                executeCluster(info=info,protocol=Protocol.CHCOMB,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+                executeCluster(info=info,protocol=Protocol.CHCOMB,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=numBS)
             # ------
             # Chained Cheap&Quick - debug version
             if runChCombDbg:
-                executeCluster(info=info,protocol=Protocol.CHCOMBDBG,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=fnumbs)
+                executeCluster(info=info,protocol=Protocol.CHCOMBDBG,constFactor=2,numClTrans=numClTrans,sleepTime=sleepTime,numViews=numViews,cutOffBound=cutOffBound,numFaults=numFaults,numBS=numBS)
 
     # cleanup
     for node in nodes:
@@ -1565,9 +1566,9 @@ def printNodePoint(protocol,numFaults,tag,val):
 # End of printNodePoint
 
 
-def printNodePointComment(protocol,numFaults,instance,repeats):
+def printNodePointComment(protocol,numFaults,instance,repeats,numBS):
     f = open(pointsFile, 'a')
-    f.write("# protocol="+protocol.value+" regions="+regions[0]+" payload="+str(payloadSize)+" faults="+str(numFaults)+" instance="+str(instance)+" repeats="+str(repeats)+"\n")
+    f.write("# protocol="+protocol.value+" regions="+regions[0]+" payload="+str(payloadSize)+" numBS="+str(numBS)+" faults="+str(numFaults)+" instance="+str(instance)+" repeats="+str(repeats)+"\n")
     f.close()
 # End of printNodePointComment
 
@@ -1589,7 +1590,7 @@ def printNodePointParams():
 # End of printNodePointParams
 
 
-def computeStats(protocol,numFaults,instance,repeats):
+def computeStats(protocol,numFaults,instance,repeats,numBS=1):
     # Computing throughput and latency
     throughputViewVal=0.0
     throughputViewNum=0
@@ -1611,7 +1612,7 @@ def computeStats(protocol,numFaults,instance,repeats):
     cryptoNumVerifVal=0.0
     cryptoNumVerifNum=0
 
-    printNodePointComment(protocol,numFaults,instance,repeats)
+    printNodePointComment(protocol,numFaults,instance,repeats,numBS)
 
     files = glob.glob(statsdir+"/*")
     for filename in files:

@@ -63,7 +63,7 @@ numClTrans   = 10000     # number of transactions sent by each clients
 sleepTime    = 0     # time clients sleep between 2 sends (in microseconds)
 timeout      = 50     # timeout before changing changing leader (in seconds)
 #
-numTrans      = 50000    # number of transactions
+numTrans      = 400    # number of transactions
 payloadSize   = 0 #256 #0 #256 #128      # total size of a transaction
 useMultiCores = True
 numMakeCores  = multiprocessing.cpu_count()  # number of cores to use to make

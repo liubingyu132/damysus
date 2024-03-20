@@ -59,7 +59,7 @@ cutOffBound  = 6000   # stop experiment after some time
 numClients   = 6     # number of clients
 numNonChCls  = 1     # number of clients for the non-chained versions
 numChCls     = 1     # number of clients for the chained versions
-numClTrans   = 1000     # number of transactions sent by each clients
+numClTrans   = 10000     # number of transactions sent by each clients
 sleepTime    = 0     # time clients sleep between 2 sends (in microseconds)
 timeout      = 50     # timeout before changing changing leader (in seconds)
 #
